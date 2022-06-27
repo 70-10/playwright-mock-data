@@ -1,0 +1,16 @@
+{
+  "name": "playwright-mock-date",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.22.2",
+    "sinon": "^14.0.0"
+  }
+}
