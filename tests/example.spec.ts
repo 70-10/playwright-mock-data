@@ -25,19 +25,27 @@ test("fake time test", async ({ page }) => {
   await page.setContent(`
     <h1>UTC Time: <x-time></x-time></h1>
     <script>
+      function formatDate (date, format) {
+        format = format.replace(/yyyy/g, date.getFullYear());
+        format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
+        format = format.replace(/dd/g, ('0' + date.getDate()).slice(-2));
+        format = format.replace(/HH/g, ('0' + date.getHours()).slice(-2));
+        format = format.replace(/mm/g, ('0' + date.getMinutes()).slice(-2));
+        format = format.replace(/ss/g, ('0' + date.getSeconds()).slice(-2));
+        format = format.replace(/SSS/g, ('00' + date.getMilliseconds()).slice(-3));
+        return format;
+      };
       const time = document.querySelector('x-time');
       (function renderLoop() {
         const date = new Date();
-        time.textContent = [date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()]
-          .map(number => String(number).padStart(2, '0'))
-          .join(':');
+        time.textContent = formatDate(date, "yyyy/MM/dd HH:mm:ss")
         setTimeout(renderLoop, 1000);
       })();
     </script>
   `);
 
   // Ensure controlled time
-  await expect(page.locator("x-time")).toHaveText("00:00:00");
-  await page.evaluate(() => window.__clock.tick(2000));
-  await expect(page.locator("x-time")).toHaveText("00:00:02");
+  await expect(page.locator("x-time")).toHaveText("1970/01/01 09:00:00");
+  await page.evaluate(() => window.__clock.tick(24 * 60 * 60 * 1000));
+  await expect(page.locator("x-time")).toHaveText("1970/01/02 09:00:00");
 });
